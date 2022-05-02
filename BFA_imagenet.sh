@@ -11,8 +11,7 @@ case $HOST in
     TENSORBOARD='/home/elliot/anaconda3/envs/pytorch041/bin/tensorboard' # tensorboard environment path
     data_path='/home/elliot/data/imagenet' # dataset path
     ;;
-"scalar")
-    /home/scalar/anaconda3/condabin/conda activate bfa
+"scalar"*)
     PYTHON="/home/scalar/anaconda3/envs/bfa/bin/python"
     TENSORBOARD="/home/scalar/anaconda3/envs/bfa/bin/tensorboard"
     data_path="/home/scalar/source/BFA/datasets/ImageNet"
@@ -70,7 +69,7 @@ if [ "$enable_tb_display" = true ]; then
     "alpha")
         google-chrome http://0.0.0.0:6006/
         ;;
-    "scalar")
+    "scalar"*)
         google-chrome -incognito http://0.0.0.0:6006/
         ;;
     esac

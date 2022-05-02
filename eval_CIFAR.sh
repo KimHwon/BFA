@@ -16,7 +16,7 @@ case $HOST in
     # data_path='/home/elliot/data/imagenet' # dataset path
     data_path='/home/elliot/data/pytorch/cifar10'
     ;;
-"scalar")
+"scalar"*)
     /home/scalar/anaconda3/condabin/conda activate bfa
     PYTHON="/home/scalar/anaconda3/envs/bfa/bin/python"
     TENSORBOARD="/home/scalar/anaconda3/envs/bfa/bin/tensorboard"
@@ -88,7 +88,7 @@ if [ "$enable_tb_display" = true ]; then
     "alpha")
         google-chrome http://0.0.0.0:6006/
         ;;
-    "scalar")
+    "scalar"*)
         google-chrome -incognito http://0.0.0.0:6006/
         ;;
     esac
