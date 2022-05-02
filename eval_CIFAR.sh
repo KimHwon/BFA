@@ -16,6 +16,12 @@ case $HOST in
     # data_path='/home/elliot/data/imagenet' # dataset path
     data_path='/home/elliot/data/pytorch/cifar10'
     ;;
+"scalar")
+    /home/scalar/anaconda3/condabin/conda activate bfa
+    PYTHON="/home/scalar/anaconda3/envs/bfa/bin/python"
+    TENSORBOARD="/home/scalar/anaconda3/envs/bfa/bin/tensorboard"
+    data_path="/home/scalar/source/BFA/datasets/CIFAR-10"
+    ;;
 esac
 
 DATE=`date +%Y-%m-%d`
@@ -81,6 +87,9 @@ if [ "$enable_tb_display" = true ]; then
         ;;
     "alpha")
         google-chrome http://0.0.0.0:6006/
+        ;;
+    "scalar")
+        google-chrome -incognito http://0.0.0.0:6006/
         ;;
     esac
 fi 
