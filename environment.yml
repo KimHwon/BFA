@@ -132,7 +132,7 @@ dependencies:
     - markdown==3.0.1
     - more-itertools==5.0.0
     - networkx==2.2
-    - numpy==1.16.0
+    - numpy==1.15.4
     - opencv-python==4.0.0.21
     - pandas==0.24.0
     - pip==19.0.1
