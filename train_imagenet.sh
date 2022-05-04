@@ -15,7 +15,7 @@ case $HOST in
     /home/scalar/anaconda3/condabin/conda activate bfa
     PYTHON="/home/scalar/anaconda3/envs/bfa/bin/python"
     TENSORBOARD="/home/scalar/anaconda3/envs/bfa/bin/tensorboard"
-    data_path="/home/scalar/source/BFA/datasets/ImageNet"
+    data_path="/home/scalar/source/BFA/datasets/ImageNet/ILSVRC/Data/CLS-LOC"
     ;;
 esac
 
