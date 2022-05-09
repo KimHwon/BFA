@@ -9,6 +9,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 from utils import AverageMeter, RecorderMeter, time_string, convert_secs2time, clustering_loss, change_quan_bitwidth
 from tensorboardX import SummaryWriter
+from torchsummaryX import summary
 import models
 from models.quantization import quan_Conv2d, quan_Linear, quantize
 
@@ -36,7 +37,7 @@ parser.add_argument('--data_path',
 parser.add_argument(
     '--dataset',
     type=str,
-    choices=['cifar10', 'cifar100', 'imagenet', 'svhn', 'stl10', 'mnist'],
+    choices=['cifar10', 'cifar100', 'imagenet', 'svhn', 'stl10', 'mnist', 'flowers'],
     help='Choose between Cifar10/100 and ImageNet.')
 parser.add_argument('--arch',
                     metavar='ARCH',
@@ -238,10 +239,26 @@ def main():
     elif args.dataset == 'imagenet':
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
+    elif args.dataset == 'stl10':
+        mean = [0.448, 0.440, 0.405]
+        std = [0.225, 0.222, 0.224]
+    elif args.dataset == 'flowers':
+        mean = [0.436, 0.378, 0.288]
+        std = [0.265, 0.213, 0.220]
     else:
         assert False, "Unknow dataset : {}".format(args.dataset)
 
-    if args.dataset == 'imagenet':
+    if args.dataset == 'cifar10':
+        train_transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomCrop(32, padding=4),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+        test_transform = transforms.Compose(
+            [transforms.ToTensor(),
+             transforms.Normalize(mean, std)])
+    elif args.dataset == 'imagenet':
         train_transform = transforms.Compose([
             transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
@@ -254,16 +271,47 @@ def main():
             transforms.ToTensor(),
             transforms.Normalize(mean, std)
         ])  # here is actually the validation dataset
-    else:
+    elif args.dataset == 'stl10':
+        train_transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomCrop(96, padding=4),
+            transforms.ToTensor()
+        ])
+        test_transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
+    elif args.dataset == 'svhn':
         train_transform = transforms.Compose([
             transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, padding=4),
             transforms.ToTensor(),
             transforms.Normalize(mean, std)
         ])
-        test_transform = transforms.Compose(
-            [transforms.ToTensor(),
-             transforms.Normalize(mean, std)])
+        test_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+    elif args.dataset == 'flowers':
+        train_transform = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+        test_transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+    else:
+        train_transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor()
+        ])
+        test_transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
 
     if args.dataset == 'mnist':
         train_data = dset.MNIST(args.data_path,
@@ -321,6 +369,12 @@ def main():
         train_data = dset.ImageFolder(train_dir, transform=train_transform)
         test_data = dset.ImageFolder(test_dir, transform=test_transform)
         num_classes = 1000
+    elif args.dataset == 'flowers':
+        train_dir = os.path.join(args.data_path, 'train')
+        test_dir = os.path.join(args.data_path, 'val')
+        train_data = dset.ImageFolder(train_dir, transform=train_transform)
+        test_data = dset.ImageFolder(test_dir, transform=test_transform)
+        num_classes = 102
     else:
         assert False, 'Do not support dataset : {}'.format(args.dataset)
 
@@ -339,8 +393,12 @@ def main():
     print_log("=> creating model '{}'".format(args.arch), log)
 
     # Init model, criterion, and optimizer
-    net = models.__dict__[args.arch](num_classes)
+    if args.arch == 'resnet20_test':
+        net = models.resnet20_test(train_data[0][0].size(), num_classes=num_classes)
+    else:
+        net = models.__dict__[args.arch](num_classes=num_classes)
     print_log("=> network :\n {}".format(net), log)
+    summary(net, torch.zeros((256, *train_data[0][0].size())))
 
     if args.use_cuda:
         if args.ngpu > 1:
@@ -657,10 +715,12 @@ def perform_attack(attacker, model, model_clean, train_loader, test_loader,
         end = time.time()
         
         # Stop the attack if the accuracy is below the configured break_acc.
-        if args.dataset == 'cifar10':
+        if args.dataset == 'cifar10' or args.dataset == 'stl10' or args.dataset == 'flowers':
             break_acc = 11.0
         elif args.dataset == 'imagenet':
             break_acc = 0.2
+        elif args.dataset == 'svhn':
+            break_acc = 13.0
         if val_acc_top1 <= break_acc:
             break
         

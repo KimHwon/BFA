@@ -20,3 +20,6 @@ from .bin_vgg_cifar import vgg11_bn_bin
 from .vanilla_models.vanilla_mobilenet_imagenet import mobilenet_v2
 
 from .quan_mobilenet_imagenet import mobilenet_v2_quan
+
+############## Custom ResNet  ###########
+from .quan_resnet_test import resnet20_test

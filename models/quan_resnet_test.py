@@ -65,7 +65,7 @@ class CifarResNet(nn.Module):
   ResNet optimized for the Cifar dataset, as specified in
   https://arxiv.org/abs/1512.03385.pdf
   """
-    def __init__(self, block, depth, num_classes):
+    def __init__(self, input_shape, block, depth, num_classes):
         """ Constructor
     Args:
       depth: number of layers.
@@ -95,7 +95,7 @@ class CifarResNet(nn.Module):
         self.stage_1 = self._make_layer(block, 16, layer_blocks, 1)
         self.stage_2 = self._make_layer(block, 32, layer_blocks, 2)
         self.stage_3 = self._make_layer(block, 64, layer_blocks, 2)
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.avgpool = nn.AvgPool2d(input_shape[1]//4)
         self.classifier = quan_Linear(64 * block.expansion, num_classes)
 
         for m in self.modules():
@@ -135,46 +135,11 @@ class CifarResNet(nn.Module):
         return self.classifier(x)
 
 
-def resnet20_quan(num_classes=10):
+def resnet20_test(input_shape, num_classes=10):
     """Constructs a ResNet-20 model for CIFAR-10 (by default)
   Args:
     num_classes (uint): number of classes
   """
-    model = CifarResNet(ResNetBasicblock, 20, num_classes)
+    model = CifarResNet(input_shape, ResNetBasicblock, 20, num_classes)
     return model
 
-
-def resnet32_quan(num_classes=10):
-    """Constructs a ResNet-32 model for CIFAR-10 (by default)
-  Args:
-    num_classes (uint): number of classes
-  """
-    model = CifarResNet(ResNetBasicblock, 32, num_classes)
-    return model
-
-
-def resnet44_quan(num_classes=10):
-    """Constructs a ResNet-44 model for CIFAR-10 (by default)
-  Args:
-    num_classes (uint): number of classes
-  """
-    model = CifarResNet(ResNetBasicblock, 44, num_classes)
-    return model
-
-
-def resnet56_quan(num_classes=10):
-    """Constructs a ResNet-56 model for CIFAR-10 (by default)
-  Args:
-    num_classes (uint): number of classes
-  """
-    model = CifarResNet(ResNetBasicblock, 56, num_classes)
-    return model
-
-
-def resnet110_quan(num_classes=10):
-    """Constructs a ResNet-110 model for CIFAR-10 (by default)
-  Args:
-    num_classes (uint): number of classes
-  """
-    model = CifarResNet(ResNetBasicblock, 110, num_classes)
-    return model
