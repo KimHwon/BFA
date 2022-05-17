@@ -26,7 +26,7 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 ############### Configurations ########################
-enable_tb_display=false # enable tensorboard display
+enable_tb_display=true # enable tensorboard display
 model=resnet20_quan
 dataset=stl10
 test_batch_size=128
@@ -41,7 +41,7 @@ save_path=./save/${DATE}/${dataset}_${model}_${label_info}
 tb_path=${save_path}/tb_log  #tensorboard log path
 
 # set the pretrained model path
-pretrained_model=/home/scalar/source/BFA/BFA/save/2022-05-08/stl10_resnet20_test_160_SGD_binarized/model_best.pth.tar
+pretrained_model=/home/scalar/source/BFA/BFA/save/2022-05-10/stl10_resnet20_quan_160_SGD_binarized/model_best.pth.tar
 
 ############### Neural network ############################
 COUNTER=0

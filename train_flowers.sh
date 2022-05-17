@@ -26,13 +26,13 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 ############### Configurations ########################
-enable_tb_display=false # enable tensorboard display
-model=resnet18_quan
+enable_tb_display=true # enable tensorboard display
+model=resnet50
 dataset=flowers
-epochs=1000
+epochs=100
 train_batch_size=256
 test_batch_size=256
-optimizer=SGD
+optimizer=Adam
 
 label_info=idx_11
 
@@ -50,8 +50,8 @@ $PYTHON main.py --dataset ${dataset} \
     --attack_sample_size ${train_batch_size} \
     --workers 8 --ngpu 1 --gpu_id 1 \
     --print_freq 100 --decay 0.000005 \
-    --momentum 0.9 \
-    #--evaluate
+    # --momentum 0.9 \
+    # --evaluate
 } &
 ############## Tensorboard logging ##########################
 {

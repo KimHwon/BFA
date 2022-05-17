@@ -26,8 +26,8 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 ############### Configurations ########################
-enable_tb_display=false # enable tensorboard display
-model=resnet20_test
+enable_tb_display=true # enable tensorboard display
+model=resnet20_quan
 dataset=stl10
 epochs=160
 train_batch_size=128

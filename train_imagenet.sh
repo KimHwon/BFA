@@ -26,7 +26,7 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 ############### Configurations ########################
-enable_tb_display=false # enable tensorboard display
+enable_tb_display=true # enable tensorboard display
 model=resnet18_quan
 dataset=imagenet
 epochs=50
@@ -48,7 +48,7 @@ $PYTHON main.py --dataset ${dataset} \
 	--schedule 30 40 45  --gammas 0.2 0.2 0.5 \
     --test_batch_size ${test_batch_size} \
     --attack_sample_size ${train_batch_size} \
-    --workers 8 --ngpu 2 --gpu_id 1 \
+    --workers 8 --ngpu 1 --gpu_id 0 \
     --print_freq 100 --decay 0.000005 \
     # --momentum 0.9 \
     # --evaluate
